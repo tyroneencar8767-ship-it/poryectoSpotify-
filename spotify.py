@@ -192,50 +192,47 @@ def buscar_cancion():
                 time.sleep(1.5)
 
 
-# ──────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────────
 # MENÚ PRINCIPAL
-# ──────────────────────────────────────────
-
+# ────────────────────────────────────────────────────────────────────
+ 
 def ejecutar_accion(opcion):
-    """Recibe la opción elegida y llama a la función correspondiente."""
     try:
-        if opcion == "1":
+        if opcion == "1": # si selecciona la opcion 1 y llama a la funcion buscar cancion
             buscar_cancion()
-        elif opcion == "2":                        # Play / Pausa (interruptor único)
-            actual = sp.current_playback()
-            if actual and actual['is_playing']:
-                sp.pause_playback()
+        elif opcion == "2": #si seleccion la opcion 2
+            actual = sp.current_playback() # Que esta haciendo y dependiendo de eso ejecuta 
+            if actual and actual['is_playing']: #Si hay un reproductor abierto Y la música está sonando actualmente
+                sp.pause_playback() #Envía la orden a Spotify para que pause la canción
             else:
-                sp.start_playback()
+                sp.start_playback() #Envía la orden a Spotify para que inicie o reanude la reproducción.
             time.sleep(0.5)
-        elif opcion == "3":
+        elif opcion == "3": # si selecciona la opcion 3 y llama a la funcion de ajustar volumen
             ajustar_volumen()
-
-    # Mismo patrón de manejo de errores que las demás funciones
-    except spotipy.SpotifyException as e:
-        if "Premium" in str(e):
+ 
+    except spotipy.SpotifyException as e: #Si es un problema con la apy
+        if "Premium" in str(e): #si detecta la palabra premium ejecuta el mensaje
             console.print("\n[bold red]❌ Esta acción requiere Spotify Premium.[/bold red]")
             time.sleep(1.5)
         else:
             console.print(f"\n[bold red]❌ Error de Spotify:[/bold red] {e}")
             time.sleep(1.5)
-    except Exception:
-        console.print("\n[bold red]❌ Error:[/bold red] Asegúrate de tener Spotify abierto en algún dispositivo.")
+    except Exception: # sirve para culaquier tipo de fallo general
+        console.print("\n[bold red]❌ Error:[/bold red] Asegúrate de tener Spotify abierto en algún dispositivo.") # muestra la advertencia 
         time.sleep(1.5)
-
-
-def menu():
-    """Ciclo principal: se repite hasta que el usuario elige 'Salir'."""
-    while True:
-        console.clear()          # Limpia la pantalla en cada vuelta
-        mostrar_logo()
-
-        try:
-            actual = sp.current_playback()
-            console.print(obtener_estado_reproduccion(actual))  # Muestra el estado actual
+ 
+ 
+def menu():  
+    while True: #crea un bloque infinito 
+        console.clear() # Limpia todo el texto anterior
+        mostrar_logo() # muestra el logo
+ 
+        try: 
+            actual = sp.current_playback() #Intenta consultar a Spotify qué canción está sonando en este instante.
+            console.print(obtener_estado_reproduccion(actual)) #mprime en pantalla el estado de la cancion
         except Exception:
-            pass                  # Si falla, simplemente no muestra el panel esta vez
-
+            pass #si encuentra un fallo, lo omite
+ 
         console.print("\n[bold white]📝 MENÚ PRINCIPAL[/bold white]")
         console.print("─" * 42)
         console.print("[bold cyan]  [1][/bold cyan] 🔍 Buscar y reproducir canción")
@@ -243,19 +240,18 @@ def menu():
         console.print("[bold magenta]  [3][/bold magenta] 🔊 Ajustar volumen (0-10)")
         console.print("[bold red]  [4][/bold red] 🚪 Salir")
         console.print("─" * 42)
-
-        opcion = Prompt.ask(                        # choices valida automáticamente la entrada
-            "\n[bold yellow]Elige una opción[/bold yellow]",
-            choices=["1", "2", "3", "4"]
+ 
+        opcion = Prompt.ask( #pide al usuario un numero
+            "\n[bold yellow]Elige una opción[/bold yellow]", 
+            choices=["1", "2", "3", "4"] #Validación automática, librería no lo acepta y le vuelve a pedir un número válido.
         )
-
-        if opcion == "4":         # Única forma de romper el ciclo infinito
+ 
+        if opcion == "4":
             console.print("\n[bold green]👋 ¡Hasta luego![/bold green]\n")
-            break
-
-        ejecutar_accion(opcion)   # Pasa la opción elegida a la función que decide qué hacer
-
-
-# Solo arranca el menú si el archivo se ejecuta directamente (no si se importa)
+            break #rompre el bucle while 
+ 
+        ejecutar_accion(opcion) #envia la opcion a la funcion
+ 
+ 
 if __name__ == "__main__":
     menu()
