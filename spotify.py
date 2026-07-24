@@ -7,9 +7,9 @@ from rich.prompt import Prompt
 import time
  
 # --- CREDENCIALES ---
-CLIENT_ID = "ae7be3d7a3024e9f81466ec3e859f089"
-CLIENT_SECRET = "72f293b4fa4f46a880d08abc34388203"
-REDIRECT_URI = "https://www.google.com"
+CLIENT_ID = "tu_client_id_real_aqui"
+CLIENT_SECRET = "tu_client_secret_real_aqui"
+REDIRECT_URI = "https://www.google.com/"
  
 SCOPES = (
     "user-library-read user-modify-playback-state user-read-playback-state "
