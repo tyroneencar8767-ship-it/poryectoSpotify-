@@ -6,7 +6,8 @@ from rich.table import Table
 from rich.prompt import Prompt
 import time
  
-# --- CREDENCIALES ---
+# --- CREDENCIALES ---  
+# --- NO SE AGREGO LAS CREDENCIALES DE 'SPOTIFY-FOR-DEVELOPERS' A ESTE REPOSITORIO POR MEDIDAS DE SEGURIDAD ---
 CLIENT_ID = "tu_client_id_real_aqui"
 CLIENT_SECRET = "tu_client_secret_real_aqui"
 REDIRECT_URI = "https://www.google.com/"
