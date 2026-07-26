@@ -201,7 +201,7 @@ def ejecutar_accion(opcion):
         if opcion == "1": # si selecciona la opcion 1 y llama a la funcion buscar cancion
             buscar_cancion()
         elif opcion == "2": #si seleccion la opcion 2
-            actual = sp.current_playback() # Que esta haciendo y dependiendo de eso ejecuta 
+            actual = sp.current_playback() #  obtiene el estado actual del reproductor (canción, dispositivo, si está sonando o no) y dependiendo de eso ejecuta.
             if actual and actual['is_playing']: #Si hay un reproductor abierto Y la música está sonando actualmente
                 sp.pause_playback() #Envía la orden a Spotify para que pause la canción
             else:
@@ -213,7 +213,7 @@ def ejecutar_accion(opcion):
     except spotipy.SpotifyException as e: #Si es un problema con la apy
         if "Premium" in str(e): #si detecta la palabra premium ejecuta el mensaje
             console.print("\n[bold red]❌ Esta acción requiere Spotify Premium.[/bold red]")
-            time.sleep(1.5)
+            time.sleep(1.5) # Esperamos 1.5 segundos para no saturar el servidor / simular tiempo de respuesta
         else:
             console.print(f"\n[bold red]❌ Error de Spotify:[/bold red] {e}")
             time.sleep(1.5)
@@ -225,15 +225,16 @@ def ejecutar_accion(opcion):
 def menu():  
     while True: #crea un bloque infinito 
         console.clear() # Limpia todo el texto anterior
-        mostrar_logo() # muestra el logo
+        mostrar_logo() 
  
         try: 
             actual = sp.current_playback() #Intenta consultar a Spotify qué canción está sonando en este instante.
             console.print(obtener_estado_reproduccion(actual)) #mprime en pantalla el estado de la cancion
         except Exception:
             pass #si encuentra un fallo, lo omite
- 
-        console.print("\n[bold white]📝 MENÚ PRINCIPAL[/bold white]")
+
+        #Interfaz visual del menu principal 
+        console.print("\n[bold white]📝 MENÚ PRINCIPAL[/bold white]") 
         console.print("─" * 42)
         console.print("[bold cyan]  [1][/bold cyan] 🔍 Buscar y reproducir canción")
         console.print("[bold green]  [2][/bold green] ⏯  Play / Pausa")
@@ -250,7 +251,7 @@ def menu():
             console.print("\n[bold green]👋 ¡Hasta luego![/bold green]\n")
             break #rompre el bucle while 
  
-        ejecutar_accion(opcion) #envia la opcion a la funcion
+        ejecutar_accion(opcion) # Envia la opcion a la funcion Anteriormente 
  
  
 if __name__ == "__main__":
