@@ -276,16 +276,16 @@ def buscar_cancion():
 
 def ejecutar_accion(opcion):
     try:
-        if opcion == "1": # si selecciona la opcion 1 y llama a la funcion buscar cancion
+        if opcion == "1": # (Buscar y reporducir Cancion) si selecciona la opcion 1 y llama a la funcion 
             buscar_cancion()
-        elif opcion == "2": #si seleccion la opcion 2
+        elif opcion == "2": #(Play / Pausa ) si seleccion la opcion 2
             actual = sp.current_playback() #  obtiene el estado actual del reproductor (canción, dispositivo, si está sonando o no) y dependiendo de eso ejecuta.
             if actual and actual['is_playing']: #Si hay un reproductor abierto Y la música está sonando actualmente
                 sp.pause_playback() #Envía la orden a Spotify para que pause la canción
             else:
                 sp.start_playback() #Envía la orden a Spotify para que inicie o reanude la reproducción.
             time.sleep(0.5)
-        elif opcion == "3": # si selecciona la opcion 3 y llama a la funcion de ajustar volumen
+        elif opcion == "3": # (Ajustar volumen) si selecciona la opcion 3 y llama a la funcion correspondiente
             ajustar_volumen()
 
     except spotipy.SpotifyException as e: #Si es un problema con la apy
