@@ -71,10 +71,6 @@ def obtener_estado_reproduccion(actual):
     min_dur, seg_dur = divmod(duracion_ms // 1000, 60)   # ms -> minutos y segundos
     duracion_str = f"{min_dur:02d}:{seg_dur:02d}"
 
-    shuffle     = "🔀 ON" if actual.get('shuffle_state') else "🔀 OFF"
-    repeat_map  = {"off": "🔁 OFF", "context": "🔁 Contexto", "track": "🔂 Canción"}
-    repeat      = repeat_map.get(actual.get('repeat_state', 'off'), "")
-
     volumen     = actual.get('device', {}).get('volume_percent')
     vol_str     = barra_volumen(volumen) if volumen is not None else ""  # Reusa la función de arriba
 
@@ -86,7 +82,7 @@ def obtener_estado_reproduccion(actual):
         f"[bold white]{track['name']}[/bold white]\n"
         f"[cyan]{artistas}[/cyan]  [dim white]— {nombre_album}[/dim white]\n"
         f"[dim white]Duración: {duracion_str}[/dim white]\n\n"
-        f"🔊 {vol_str}   [dim]{shuffle}   {repeat}[/dim]"
+        f"🔊 {vol_str}"
     )
     return Panel(contenido, border_style="green", title="🎵 EN REPRODUCCIÓN", padding=(0, 1))
 
@@ -95,7 +91,7 @@ def obtener_estado_reproduccion(actual):
 # AJUSTE DE VOLUMEN (escala 0-10)
 # ──────────────────────────────────────────
 
- def ajustar_volumen():
+def ajustar_volumen():
     """Pide al usuario un nivel de 0 a 10 y aplica el volumen."""
 
     try:
@@ -256,9 +252,6 @@ def buscar_cancion():
             # Espera un segundo para que el usuario pueda leer el mensaje
             time.sleep(1)
 
-            # Abre el modo de reproducción en tiempo real
-            modo_tiempo_real()
-
         # Captura errores específicos de Spotify
         except spotipy.SpotifyException as e:
 
@@ -280,7 +273,7 @@ def buscar_cancion():
 # ────────────────────────────────────────────────────────────────────
 # MENÚ PRINCIPAL
 # ────────────────────────────────────────────────────────────────────
- 
+
 def ejecutar_accion(opcion):
     try:
         if opcion == "1": # si selecciona la opcion 1 y llama a la funcion buscar cancion
@@ -294,7 +287,7 @@ def ejecutar_accion(opcion):
             time.sleep(0.5)
         elif opcion == "3": # si selecciona la opcion 3 y llama a la funcion de ajustar volumen
             ajustar_volumen()
- 
+
     except spotipy.SpotifyException as e: #Si es un problema con la apy
         if "Premium" in str(e): #si detecta la palabra premium ejecuta el mensaje
             console.print("\n[bold red]❌ Esta acción requiere Spotify Premium.[/bold red]")
@@ -303,41 +296,41 @@ def ejecutar_accion(opcion):
             console.print(f"\n[bold red]❌ Error de Spotify:[/bold red] {e}")
             time.sleep(1.5)
     except Exception: # sirve para culaquier tipo de fallo general
-        console.print("\n[bold red]❌ Error:[/bold red] Asegúrate de tener Spotify abierto en algún dispositivo.") # muestra la advertencia 
+        console.print("\n[bold red]❌ Error:[/bold red] Asegúrate de tener Spotify abierto en algún dispositivo.") # muestra la advertencia
         time.sleep(1.5)
- 
- 
-def menu():  
-    while True: #crea un bloque infinito 
+
+
+def menu():
+    while True: #crea un bloque infinito
         console.clear() # Limpia todo el texto anterior
-        mostrar_logo() 
- 
-        try: 
+        mostrar_logo()
+
+        try:
             actual = sp.current_playback() #Intenta consultar a Spotify qué canción está sonando en este instante.
             console.print(obtener_estado_reproduccion(actual)) #mprime en pantalla el estado de la cancion
         except Exception:
             pass #si encuentra un fallo, lo omite
 
-        #Interfaz visual del menu principal 
-        console.print("\n[bold white]📝 MENÚ PRINCIPAL[/bold white]") 
+        #Interfaz visual del menu principal
+        console.print("\n[bold white]📝 MENÚ PRINCIPAL[/bold white]")
         console.print("─" * 42)
         console.print("[bold cyan]  [1][/bold cyan] 🔍 Buscar y reproducir canción")
         console.print("[bold green]  [2][/bold green] ⏯  Play / Pausa")
         console.print("[bold magenta]  [3][/bold magenta] 🔊 Ajustar volumen (0-10)")
         console.print("[bold red]  [4][/bold red] 🚪 Salir")
         console.print("─" * 42)
- 
+
         opcion = Prompt.ask( #pide al usuario un numero
-            "\n[bold yellow]Elige una opción[/bold yellow]", 
+            "\n[bold yellow]Elige una opción[/bold yellow]",
             choices=["1", "2", "3", "4"] #Validación automática, librería no lo acepta y le vuelve a pedir un número válido.
         )
- 
+
         if opcion == "4":
             console.print("\n[bold green]👋 ¡Hasta luego![/bold green]\n")
-            break #rompre el bucle while 
- 
-        ejecutar_accion(opcion) # Envia la opcion a la funcion Anteriormente 
- 
- 
+            break #rompre el bucle while
+
+        ejecutar_accion(opcion) # Envia la opcion a la funcion Anteriormente
+
+
 if __name__ == "__main__":
     menu()
