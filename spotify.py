@@ -95,100 +95,185 @@ def obtener_estado_reproduccion(actual):
 # AJUSTE DE VOLUMEN (escala 0-10)
 # ──────────────────────────────────────────
 
-def ajustar_volumen():
+ def ajustar_volumen():
     """Pide al usuario un nivel de 0 a 10 y aplica el volumen."""
+
     try:
-        actual = sp.current_playback()  # Consulta qué se reproduce ahora
+        # Obtiene la información de la reproducción actual desde Spotify
+        actual = sp.current_playback()
+
+        # Obtiene el volumen actual del dispositivo.
+        # Si no existe un dispositivo activo, usa 50 como valor por defecto.
         vol_actual = actual.get('device', {}).get('volume_percent', 50) if actual else 50
+
+        # Convierte el volumen de la escala 0-100 a una escala más simple de 0-10
         nivel_actual = round(vol_actual / 10)
 
+        # Muestra el volumen actual utilizando una barra visual
         console.print(f"\n  Volumen actual: {barra_volumen(vol_actual)}")
+
+        # Muestra al usuario la escala de volumen permitida
         console.print("  [dim]Escala: 0 = silencio · 10 = máximo[/dim]\n")
 
-        entrada = Prompt.ask(                       # Pide el nuevo nivel al usuario
+        # Solicita al usuario un nuevo nivel de volumen.
+        # Si solo presiona Enter, se utilizará el volumen actual.
+        entrada = Prompt.ask(
             "  [bold yellow]Nuevo volumen (0-10)[/bold yellow]",
             default=str(nivel_actual)
         )
 
-        if not entrada.isdigit():          # Valida que sean solo números
+        # Verifica que la entrada contenga únicamente números
+        if not entrada.isdigit():
             console.print("  [red]Valor no válido.[/red]")
-            return
+            return  # Finaliza la función si el dato es incorrecto
 
+        # Convierte el texto ingresado por el usuario a un número entero
         nivel = int(entrada)
-        if not 0 <= nivel <= 10:           # Valida que esté en el rango permitido
-            console.print("  [red]Ingresa un número entre 0 y 10.[/red]")
-            return
 
-        nuevo_vol = nivel * 10             # Vuelve a la escala real de Spotify (0-100)
-        sp.volume(nuevo_vol)               # Orden real enviada a la API
+        # Comprueba que el número esté dentro del rango permitido (0 a 10)
+        if not 0 <= nivel <= 10:
+            console.print("  [red]Ingresa un número entre 0 y 10.[/red]")
+            return  # Termina la función si el valor está fuera del rango
+
+        # Convierte la escala de 0-10 nuevamente a la escala de Spotify (0-100)
+        nuevo_vol = nivel * 10
+
+        # Envía la orden a Spotify para cambiar el volumen del dispositivo activo
+        sp.volume(nuevo_vol)
+
+        # Muestra el nuevo volumen utilizando la barra visual
         console.print(f"\n  🔊 Volumen ajustado a: {barra_volumen(nuevo_vol)}")
+
+        # Espera un segundo para que el usuario pueda leer el mensaje
         time.sleep(1)
 
-    # Error específico de Spotify (por ejemplo, falta de cuenta Premium)
+    # Captura errores específicos generados por la API de Spotify
     except spotipy.SpotifyException as e:
+
+        # Verifica si el error se debe a que la cuenta no es Premium
         if "Premium" in str(e):
             console.print("\n[bold red]❌ Controlar el volumen requiere Spotify Premium.[/bold red]")
             time.sleep(1.5)
+
+        # Si es otro error de Spotify, muestra el mensaje recibido
         else:
             console.print(f"\n[bold red]❌ Error:[/bold red] {e}")
             time.sleep(1.5)
-    # Cualquier otro error (sin conexión, sin dispositivo activo, etc.)
+
+    # Captura cualquier otro error inesperado
     except Exception:
         console.print("\n[bold red]❌ Abre Spotify en tu dispositivo primero.[/bold red]")
         time.sleep(1.5)
-
 
 # ──────────────────────────────────────────
 # BÚSQUEDA
 # ──────────────────────────────────────────
 
 def buscar_cancion():
+
+    # Solicita al usuario el nombre de una canción o un artista
     query = Prompt.ask("\n[bold cyan]🔍 Nombre de la canción o artista[/bold cyan]")
-    if not query.strip():          # Si no escribió nada, cancela
+
+    # Elimina espacios en blanco y verifica que el usuario haya escrito algo
+    # Si la búsqueda está vacía, termina la función
+    if not query.strip():
         return
 
+    # Muestra un mensaje indicando que se está realizando la búsqueda
     console.print(f"\n[dim]Buscando '{query}'...[/dim]")
-    results = sp.search(q=query, limit=8, type='track')  # Llamada real a la API
-    tracks  = results['tracks']['items']                  # Lista de canciones encontradas
 
-    if not tracks:                 # Sin resultados
+    # Envía la búsqueda a la API de Spotify
+    # q=query  -> texto que escribió el usuario
+    # limit=8 -> máximo 8 resultados
+    # type='track' -> buscar únicamente canciones
+    results = sp.search(q=query, limit=8, type='track')
+
+    # Extrae únicamente la lista de canciones encontradas
+    tracks = results['tracks']['items']
+
+    # Si no se encontró ninguna canción, muestra un mensaje y termina la función
+    if not tracks:
         console.print("[bold red]No se encontraron resultados.[/bold red]")
         time.sleep(1.5)
         return
 
-    # Arma la tabla de resultados
+    # Crea una tabla para mostrar los resultados de forma ordenada
     table = Table(show_header=True, header_style="bold cyan", border_style="dim")
-    table.add_column("N°",      style="dim", width=4)
+
+    # Agrega las columnas de la tabla
+    table.add_column("N°", style="dim", width=4)
     table.add_column("Canción", style="white")
     table.add_column("Artista", style="green")
-    table.add_column("Álbum",   style="dim white")
-    table.add_column("Dur.",    style="dim", justify="right")
+    table.add_column("Álbum", style="dim white")
+    table.add_column("Dur.", style="dim", justify="right")
 
-    for idx, track in enumerate(tracks):          # Llena la tabla, canción por canción
+    # Recorre todas las canciones encontradas
+    for idx, track in enumerate(tracks):
+
+        # Convierte la duración de milisegundos a minutos y segundos
         m, s = divmod(track['duration_ms'] // 1000, 60)
+
+        # Agrega una fila con la información de cada canción
         table.add_row(
-            str(idx + 1),                          # Numera desde 1
-            track['name'],
-            track['artists'][0]['name'],           # Solo el primer artista
-            track.get('album', {}).get('name', ''),
-            f"{m}:{s:02d}"
+            str(idx + 1),                      # Número de la canción
+            track['name'],                     # Nombre de la canción
+            track['artists'][0]['name'],       # Primer artista de la lista
+            track.get('album', {}).get('name', ''),  # Nombre del álbum
+            f"{m}:{s:02d}"                     # Duración en formato mm:ss
         )
 
+    # Muestra la tabla completa en la consola
     console.print(table)
 
-    seleccion = Prompt.ask("\n[bold yellow]Número para reproducir (ENTER para cancelar)[/bold yellow]", default="")
-    if seleccion.isdigit() and 1 <= int(seleccion) <= len(tracks):  # Valida el número elegido
-        elegido = tracks[int(seleccion) - 1]        # -1 porque la lista empieza en índice 0
+    # Pide al usuario el número de la canción que desea reproducir
+    # Si presiona Enter, la operación se cancela
+    seleccion = Prompt.ask(
+        "\n[bold yellow]Número para reproducir (ENTER para cancelar)[/bold yellow]",
+        default=""
+    )
+
+    # Verifica que el usuario haya ingresado un número
+    # y que ese número exista dentro de la lista de resultados
+    if seleccion.isdigit() and 1 <= int(seleccion) <= len(tracks):
+
+        # Obtiene la canción elegida por el usuario
+        # Se resta 1 porque las listas comienzan en la posición 0
+        elegido = tracks[int(seleccion) - 1]
+
         try:
-            sp.start_playback(uris=[elegido['uri']])  # Orden real: reproducir esa canción
-            console.print(f"\n[bold green]▶  Reproduciendo:[/bold green] [bold white]{elegido['name']}[/bold white] — [cyan]{elegido['artists'][0]['name']}[/cyan]")
+
+            # Envía la orden a Spotify para reproducir la canción seleccionada
+            # utilizando su URI (identificador único)
+            sp.start_playback(uris=[elegido['uri']])
+
+            # Muestra el nombre de la canción que comenzó a reproducirse
+            console.print(
+                f"\n[bold green]▶ Reproduciendo:[/bold green] "
+                f"[bold white]{elegido['name']}[/bold white] "
+                f"— [cyan]{elegido['artists'][0]['name']}[/cyan]"
+            )
+
+            # Espera un segundo para que el usuario pueda leer el mensaje
             time.sleep(1)
+
+            # Abre el modo de reproducción en tiempo real
+            modo_tiempo_real()
+
+        # Captura errores específicos de Spotify
         except spotipy.SpotifyException as e:
+
+            # Comprueba si el error se debe a que la cuenta no es Premium
             if "Premium" in str(e):
-                console.print("\n[bold red]❌ Esta función requiere Spotify Premium.[/bold red]")
+                console.print(
+                    "\n[bold red]❌ Esta función requiere Spotify Premium.[/bold red]"
+                )
                 time.sleep(1.5)
+
+            # Si el error es otro, informa al usuario que debe abrir Spotify
             else:
-                console.print("\n[bold red]❌ Error:[/bold red] Abre Spotify en tu dispositivo primero.")
+                console.print(
+                    "\n[bold red]❌ Error:[/bold red] Abre Spotify en tu dispositivo primero."
+                )
                 time.sleep(1.5)
 
 
