@@ -301,12 +301,12 @@ def ejecutar_accion(opcion):
 
 
 def menu():
-    while True: #crea un bloque infinito
+    while True: #crea un bucle infinito
         console.clear() # Limpia todo el texto anterior
         mostrar_logo()
 
-        try:
-            actual = sp.current_playback() #Intenta consultar a Spotify qué canción está sonando en este instante.
+        try: # Intenta ejecutar la apy de spotify
+            actual = sp.current_playback() # consulta a Spotify qué canción está sonando en este instante.
             console.print(obtener_estado_reproduccion(actual)) #mprime en pantalla el estado de la cancion
         except Exception:
             pass #si encuentra un fallo, lo omite
