@@ -1,12 +1,17 @@
 <div align="center">
 
-# 🎵 Spotify por Terminal
+# 🎵 Spotify CLI Player
 
 <div align="center">
   <img width="700" height="200" alt="image" src="https://github.com/user-attachments/assets/2bff6efc-2b26-4507-917e-cf79055a5da5" />
 
 </div>
+<div align="center">
 
+# Spotify por Terminal
+
+</div>
+  
 ### Controla tu música completa desde la línea de comandos — sin abrir nunca la app gráfica.
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
