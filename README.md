@@ -2,6 +2,11 @@
 
 # 🎵 Spotify por Terminal
 
+<div align="center">
+  <img width="700" height="200" alt="image" src="https://github.com/user-attachments/assets/2bff6efc-2b26-4507-917e-cf79055a5da5" />
+
+</div>
+
 ### Controla tu música completa desde la línea de comandos — sin abrir nunca la app gráfica.
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
@@ -38,31 +43,10 @@ Un reproductor de **Spotify** con interfaz visual construida 100% en la terminal
 
 <div align="center">
 
-```
-  ╔══════════════════════════════════════╗
-  ║  🎵 SPOTIFY POR TERMINAL              ║
-  ║  Controla tu música desde la terminal ║
-  ╚══════════════════════════════════════╝
 
-╭─────────────────── 🎵 EN REPRODUCCIÓN ───────────────────╮
-│ ▶  Sonando   Laptop de Camilo                             │
-│ Blinding Lights                                            │
-│ The Weeknd  — After Hours                                  │
-│ Duración: 03:20                                            │
-│                                                              │
-│ 🔊 ██████████░░░░ 7/10                                     │
-╰──────────────────────────────────────────────────────────╯
+<img width="872" height="531" alt="image" src="https://github.com/user-attachments/assets/4d28e773-01c0-44d0-a915-8b79748aa9cc" />
 
-📝 MENÚ PRINCIPAL
-──────────────────────────────────────────
-  [1] 🔍 Buscar y reproducir canción
-  [2] ⏯  Play / Pausa
-  [3] 🔊 Ajustar volumen (0-10)
-  [4] 🚪 Salir
-──────────────────────────────────────────
 
-Elige una opción [1/2/3/4]:
-```
 
 </div>
 
