@@ -338,7 +338,7 @@ git push origin feature/mi-mejora
 
 ## 📄 Licencia
 
-Este proyecto está bajo la licencia **MIT**. Consultá el archivo [`LICENSE.txt`](LICENSE) para más detalles.
+Este proyecto está bajo la licencia **MIT**. Consultá el archivo [`LICENSE`](LICENSE) para más detalles.
 
 <div align="center">
 
