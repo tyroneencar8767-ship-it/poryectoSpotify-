@@ -109,6 +109,7 @@ Login seguro vía navegador con `SpotifyOAuth`, con renovación automática del 
 | Categoría | Detalle |
 |---|---|
 | 🐍 Lenguaje | [Python](https://www.python.org/) 3.8 o superior |
+| 🎫 Código Fuente| [Ver Código Fuente](spotify.py) |
 | 📡 Cliente de API | [`spotipy`](https://spotipy.readthedocs.io/) — wrapper oficial no oficial de la Web API de Spotify |
 | 🎨 Interfaz visual | [`rich`](https://rich.readthedocs.io/) — renderizado avanzado en terminal |
 | 🎧 Cuenta | **Spotify Premium** (requerida para controlar reproducción y volumen) |
