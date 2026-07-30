@@ -35,6 +35,7 @@ Un reproductor de **Spotify** con interfaz visual construida 100% en la terminal
 - [🔒 Seguridad y buenas prácticas](#-seguridad-y-buenas-prácticas)
 - [🗺️ Roadmap](#️-roadmap)
 - [🤝 Contribuciones](#-contribuciones)
+- [👥 Créditos y Colaboradores](#-créditos-y-colaboradores)
 - [📄 Licencia](#-licencia)
 
 ---
@@ -44,14 +45,13 @@ Un reproductor de **Spotify** con interfaz visual construida 100% en la terminal
 <div align="center">
 
 
-<img width="872" height="531" alt="image" src="https://github.com/user-attachments/assets/4d28e773-01c0-44d0-a915-8b79748aa9cc" />
+<img width="610" height="442" alt="Grabación de pantalla 2026-07-29 223648" src="https://github.com/user-attachments/assets/b9d41e4b-5b58-4f1b-9a17-6a92a6dd594f" />
+
 
 
 
 </div>
 
-> [!TIP]
-> Reemplazá este bloque por un GIF real grabado con [Terminalizer](https://github.com/faressoft/terminalizer) o [asciinema](https://asciinema.org/) para maximizar el impacto visual en tu portafolio.
 
 ---
 
@@ -147,63 +147,6 @@ Para que la app pueda autenticarse contra la Web API, necesitás registrar tu pr
 
 ---
 
-## ⚙️ Instalación y configuración
-
-**1. Cloná el repositorio**
-
-```bash
-git clone https://github.com/tu-usuario/spotify-por-terminal.git
-cd spotify-por-terminal
-```
-
-**2. Creá y activá un entorno virtual**
-
-```bash
-python -m venv venv
-
-# En Windows
-venv\Scripts\activate
-
-# En macOS / Linux
-source venv/bin/activate
-```
-
-**3. Instalá las dependencias**
-
-```bash
-pip install -r requirements.txt
-```
-
-> [!TIP]
-> Si no tenés un `requirements.txt`, podés generarlo con `pip freeze > requirements.txt` una vez que tengas `spotipy` y `rich` instalados, o instalarlos directo con `pip install spotipy rich`.
-
-**4. Configurá tus credenciales**
-
-Recomendado: usar variables de entorno en vez de escribir las credenciales directamente en el código.
-
-Creá un archivo `.env` en la raíz del proyecto:
-
-```bash
-CLIENT_ID=tu_client_id_aqui
-CLIENT_SECRET=tu_client_secret_aqui
-REDIRECT_URI=https://www.google.com/
-```
-
-Y cargalas en tu script con `python-dotenv`:
-
-```python
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
-CLIENT_ID = os.getenv("CLIENT_ID")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-REDIRECT_URI = os.getenv("REDIRECT_URI")
-```
-
-> [!NOTE]
-> Si preferís simplicidad por sobre buenas prácticas para pruebas locales rápidas, podés pegar las credenciales directamente en las variables `CLIENT_ID` y `CLIENT_SECRET` del script — pero nunca subas ese archivo a un repositorio público así.
 
 **5. Ejecutá el programa**
 
@@ -231,43 +174,6 @@ Al ejecutar el script vas a ver el menú principal con 4 opciones:
 
 ---
 
-## 🔒 Seguridad y buenas prácticas
-
-> [!WARNING]
-> Este proyecto interactúa con credenciales sensibles. Seguí estas recomendaciones antes de subir tu código a GitHub:
-
-- ✅ Agregá `.env` y `.cache*` a tu `.gitignore`:
-
-```gitignore
-# Credenciales y tokens
-.env
-.cache
-.cache-*
-
-# Entorno virtual
-venv/
-__pycache__/
-*.pyc
-```
-
-- ✅ Nunca hardcodees `CLIENT_SECRET` en un commit.
-- ✅ Si accidentalmente subiste una credencial, **regenerala** desde el Dashboard de Spotify inmediatamente — no alcanza con borrarla del código.
-- ✅ El archivo `.cache` que genera `spotipy` contiene tu token de acceso: tratalo con la misma precaución que una contraseña.
-
----
-
-## 🗺️ Roadmap
-
-Ideas para futuras contribuciones:
-
-- [ ] ⏭️ Soporte para saltar a la siguiente / canción anterior
-- [ ] ⌨️ Atajos de teclado sin necesidad de presionar Enter
-- [ ] 📃 Soporte para reproducir playlists completas
-- [ ] 🔀 Control de shuffle y modo repetición desde el menú
-- [ ] 📊 Barra de progreso de la canción en tiempo real
-
----
-
 ## 🤝 Contribuciones
 
 ¡Las contribuciones son bienvenidas! Si este proyecto te resultó útil:
@@ -283,6 +189,17 @@ git checkout -b feature/mi-mejora
 git commit -m "Agrega: mi mejora"
 git push origin feature/mi-mejora
 ```
+
+---
+
+## 👥 Créditos y Colaboradores
+
+| Avatar | Usuario de GitHub | Perfil |
+| :---: | :--- | :--- |
+| <img src="https://github.com/JoseCamilo667.png" width="40" style="border-radius: 50%;"> | **JoseCamilo667** | [@JoseCamilo667](https://github.com/JoseCamilo667) |
+| <img src="https://github.com/manuelponcearmijos-lgtm.png" width="40" style="border-radius: 50%;"> | **manuelponcearmijos-lgtm** | [@manuelponcearmijos-lgtm](https://github.com/manuelponcearmijos-lgtm) |
+| <img src="https://github.com/Cebillo.png" width="40" style="border-radius: 50%;"> | **Cebillo** | [@Cebillo](https://github.com/Cebillo) |
+| <img src="https://github.com/tyroneencar8767-ship-it.png" width="40" style="border-radius: 50%;"> | **tyroneencar8767-ship-it** | [@tyroneencar8767-ship-it](https://github.com/tyroneencar8767-ship-it) |
 
 ---
 
