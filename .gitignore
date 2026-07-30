@@ -1,0 +1,13 @@
+# Cache de token de Spotipy — contiene tu access/refresh token
+.cache
+.cache-*
+
+# Variables de entorno con credenciales
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
