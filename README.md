@@ -121,8 +121,8 @@ Login seguro vía navegador con `SpotifyOAuth`, con renovación automática del 
 **1. Cloná el repositorio**
 
 ```bash
-git clone https://github.com/tyronx7/spotify-cli-player.git
-cd spotify-cli-player
+git clone https://github.com/tyronx7/SPOTIFY-CLI-PLAYER.git
+cd SPOTIFY-CLI-PLAYER
 ```
 
 **2. Instalá las dependencias**
@@ -264,7 +264,7 @@ También podés salir en cualquier momento con <kbd>Ctrl</kbd> + <kbd>C</kbd>.
 ## 🗂️ Estructura del proyecto
 
 ```
-spotify-cli-player/
+SPOTIFY-CLI-PLAYER/
 ├── spotify.py          # Todo el programa: auth, menú, búsqueda, reproducción y volumen
 ├── requirements.txt    # Dependencias (spotipy, rich)
 ├── .gitignore          # Excluye .cache, .env y artefactos de Python
