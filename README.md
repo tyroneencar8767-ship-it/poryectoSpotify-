@@ -200,7 +200,7 @@ git push origin feature/mi-mejora
 | <img src="https://github.com/JoseCamilo667.png" width="40" style="border-radius: 50%;"> | **JoseCamilo667** | [@JoseCamilo667](https://github.com/JoseCamilo667) |
 | <img src="https://github.com/manuelponcearmijos-lgtm.png" width="40" style="border-radius: 50%;"> | **manuelponcearmijos-lgtm** | [@manuelponcearmijos-lgtm](https://github.com/manuelponcearmijos-lgtm) |
 | <img src="https://github.com/Cebillo.png" width="40" style="border-radius: 50%;"> | **Cebillo** | [@Cebillo](https://github.com/Cebillo) |
-| <img src="https://github.com/tyroneencar8767-ship-it.png" width="40" style="border-radius: 50%;"> | **tyroneencar8767-ship-it** | [@tyroneencar8767-ship-it](https://github.com/tyroneencar8767-ship-it) |
+| <img src="https://github.com/tyronx7.png" width="40" style="border-radius: 50%;"> | **tyronx7** | [@tyronx7](https://github.com/tyroneencar8767-ship-it) |
 
 ---
 
