@@ -149,7 +149,7 @@ Para que la app pueda autenticarse contra la Web API, necesitás registrar tu pr
 **5. Ejecutá el programa**
 
 ```bash
-python spotify_cli.py
+python spotify.py
 ```
 
 La primera vez se abrirá tu navegador pidiéndote iniciar sesión en Spotify y autorizar la aplicación. Una vez aceptado, podés volver a la terminal.
