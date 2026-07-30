@@ -294,6 +294,6 @@ Este proyecto está bajo la licencia **MIT**. Consultá el archivo [`LICENSE`](.
 
 ---
 
-**Hecho con 🎧 y Python** — si te sirvió, considerá dejar una ⭐
+**Hecho con Python** — si te sirvió, considerá dejar una ⭐
 
 </div>
