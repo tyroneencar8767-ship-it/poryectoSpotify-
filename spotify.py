@@ -4,13 +4,17 @@ from rich.console import Console             # Representa la "pantalla" de la te
 from rich.panel import Panel                 # Dibuja recuadros con borde
 from rich.table import Table                 # Dibuja tablas con columnas alineadas
 from rich.prompt import Prompt               # Pide texto/opciones al usuario
+from rich.markup import escape               # Neutraliza los corchetes en texto de la API
+import os                                    # Para leer variables de entorno
+import sys                                   # Para salir con código de error
 import time                                  # Para pausas (time.sleep)
 
 # --- CREDENCIALES ---
 # --- NO SE AGREGO LAS CREDENCIALES DE 'SPOTIFY-FOR-DEVELOPERS' A ESTE REPOSITORIO POR MEDIDAS DE SEGURIDAD ---
-CLIENT_ID = "tu_client_id_real_aqui"         # Identificador público de la app (Developer Dashboard)
-CLIENT_SECRET = "tu_client_secret_real_aqui" # Clave privada de la app
-REDIRECT_URI = "https://www.google.com/"     # Debe coincidir con la registrada en el Dashboard
+# Se leen primero de variables de entorno; si no existen, se usan los valores de abajo.
+CLIENT_ID = os.environ.get("SPOTIPY_CLIENT_ID", "tu_client_id_real_aqui")
+CLIENT_SECRET = os.environ.get("SPOTIPY_CLIENT_SECRET", "tu_client_secret_real_aqui")
+REDIRECT_URI = os.environ.get("SPOTIPY_REDIRECT_URI", "https://www.google.com")
 
 # Permisos que el usuario debe autorizar la primera vez
 SCOPES = (
@@ -19,6 +23,17 @@ SCOPES = (
 )
 
 console = Console()  # Objeto para imprimir con estilo en la terminal
+
+# Aviso claro si el usuario todavía no configuró sus credenciales,
+# en vez de dejar que SpotifyOAuth falle con un error críptico.
+if CLIENT_ID.startswith("tu_client_id") or CLIENT_SECRET.startswith("tu_client_secret"):
+    console.print(
+        "\n[bold red]❌ Faltan las credenciales de Spotify.[/bold red]\n"
+        "[dim]Definí SPOTIPY_CLIENT_ID y SPOTIPY_CLIENT_SECRET como variables de entorno,\n"
+        "o editá CLIENT_ID / CLIENT_SECRET al inicio de spotify.py.\n"
+        "Obtenelas en https://developer.spotify.com/dashboard[/dim]\n"
+    )
+    sys.exit(1)
 
 # Cliente principal: TODO el programa usa "sp" para hablar con la API de Spotify
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
@@ -35,19 +50,28 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
 def mostrar_logo():
     # Imprime el encabezado del programa (recuadro con título)
     console.print()
-    console.print("[bold green]  ╔══════════════════════════════════════╗[/bold green]")
-    console.print("[bold green]  ║[/bold green]  [bold white]🎵 SPOTIFY CLI PLAYER[/bold white]              [bold green]║[/bold green]")
-    console.print("[bold green]  ║[/bold green]  [dim white]Controla tu música desde la terminal[/dim white]  [bold green]║[/bold green]")
-    console.print("[bold green]  ╚══════════════════════════════════════╝[/bold green]")
+    console.print("[bold green]  ╔══════════════════════════════════════════╗[/bold green]")
+    console.print("[bold green]  ║[/bold green]  [bold white]🎵 SPOTIFY CLI PLAYER[/bold white]                   [bold green]║[/bold green]")
+    console.print("[bold green]  ║[/bold green]  [dim white]Controla tu música desde la terminal[/dim white]    [bold green]║[/bold green]")
+    console.print("[bold green]  ╚══════════════════════════════════════════╝[/bold green]")
     console.print()
 
 
 def barra_volumen(vol_percent):
     """Convierte volumen 0-100 en una barra visual de 10 bloques."""
+    if vol_percent is None:                  # El dispositivo puede no reportar volumen
+        return "[dim]░░░░░░░░░░ —/10[/dim]"
     bloques = round(vol_percent / 10)        # Escala 0-100 -> 0-10
+    bloques = max(0, min(10, bloques))       # Nunca fuera del rango 0-10
     llenos  = "█" * bloques                  # Repite el bloque lleno "bloques" veces
     vacios  = "░" * (10 - bloques)           # Rellena el resto con bloques vacíos
     return f"[bright_green]{llenos}[/bright_green][dim]{vacios}[/dim] {bloques}/10"
+
+
+def nombre_artista(track):
+    """Devuelve el primer artista de una canción, o '—' si la API no lo trae."""
+    artistas = track.get('artists') or []
+    return artistas[0]['name'] if artistas else "—"
 
 
 def obtener_estado_reproduccion(actual):
@@ -61,26 +85,26 @@ def obtener_estado_reproduccion(actual):
         )
 
     track       = actual['item']                                  # Datos de la canción
-    album       = track.get('album', {})
-    artistas    = ", ".join(a['name'] for a in track['artists'])  # Une todos los artistas
+    album       = track.get('album') or {}                        # 'album' puede venir como null
+    artistas    = ", ".join(a['name'] for a in track.get('artists', []))
     nombre_album = album.get('name', '')
     estado      = "▶  Sonando" if actual['is_playing'] else "⏸  En pausa"
     estado_color = "bold green" if actual['is_playing'] else "bold yellow"
 
-    duracion_ms = track['duration_ms']
+    duracion_ms = track.get('duration_ms') or 0
     min_dur, seg_dur = divmod(duracion_ms // 1000, 60)   # ms -> minutos y segundos
     duracion_str = f"{min_dur:02d}:{seg_dur:02d}"
 
-    volumen     = actual.get('device', {}).get('volume_percent')
-    vol_str     = barra_volumen(volumen) if volumen is not None else ""  # Reusa la función de arriba
-
-    device_name = actual.get('device', {}).get('name', '')
+    # 'device' puede venir como null en la respuesta de la API, no solo ausente
+    device      = actual.get('device') or {}
+    vol_str     = barra_volumen(device.get('volume_percent'))  # Reusa la función de arriba
+    device_name = device.get('name', '')
 
     # Arma el texto final del panel, línea por línea
     contenido = (
-        f"[{estado_color}]{estado}[/{estado_color}]  [dim]{device_name}[/dim]\n"
-        f"[bold white]{track['name']}[/bold white]\n"
-        f"[cyan]{artistas}[/cyan]  [dim white]— {nombre_album}[/dim white]\n"
+        f"[{estado_color}]{estado}[/{estado_color}]  [dim]{escape(device_name)}[/dim]\n"
+        f"[bold white]{escape(track['name'])}[/bold white]\n"
+        f"[cyan]{escape(artistas)}[/cyan]  [dim white]— {escape(nombre_album)}[/dim white]\n"
         f"[dim white]Duración: {duracion_str}[/dim white]\n\n"
         f"🔊 {vol_str}"
     )
@@ -99,8 +123,11 @@ def ajustar_volumen():
         actual = sp.current_playback()
 
         # Obtiene el volumen actual del dispositivo.
-        # Si no existe un dispositivo activo, usa 50 como valor por defecto.
-        vol_actual = actual.get('device', {}).get('volume_percent', 50) if actual else 50
+        # 'device' puede faltar o venir como null; si no hay dato, usa 50 por defecto.
+        device = (actual or {}).get('device') or {}
+        vol_actual = device.get('volume_percent')
+        if vol_actual is None:
+            vol_actual = 50
 
         # Convierte el volumen de la escala 0-100 a una escala más simple de 0-10
         nivel_actual = round(vol_actual / 10)
@@ -176,7 +203,7 @@ def buscar_cancion():
         return
 
     # Muestra un mensaje indicando que se está realizando la búsqueda
-    console.print(f"\n[dim]Buscando '{query}'...[/dim]")
+    console.print(f"\n[dim]Buscando '{escape(query)}'...[/dim]")
 
     # Envía la búsqueda a la API de Spotify
     # q=query  -> texto que escribió el usuario
@@ -211,11 +238,11 @@ def buscar_cancion():
 
         # Agrega una fila con la información de cada canción
         table.add_row(
-            str(idx + 1),                      # Número de la canción
-            track['name'],                     # Nombre de la canción
-            track['artists'][0]['name'],       # Primer artista de la lista
-            track.get('album', {}).get('name', ''),  # Nombre del álbum
-            f"{m}:{s:02d}"                     # Duración en formato mm:ss
+            str(idx + 1),                          # Número de la canción
+            escape(track['name']),                 # Nombre de la canción
+            escape(nombre_artista(track)),         # Primer artista de la lista
+            escape((track.get('album') or {}).get('name', '')),  # Nombre del álbum
+            f"{m:02d}:{s:02d}"                   # Duración en formato mm:ss
         )
 
     # Muestra la tabla completa en la consola
@@ -245,8 +272,8 @@ def buscar_cancion():
             # Muestra el nombre de la canción que comenzó a reproducirse
             console.print(
                 f"\n[bold green]▶ Reproduciendo:[/bold green] "
-                f"[bold white]{elegido['name']}[/bold white] "
-                f"— [cyan]{elegido['artists'][0]['name']}[/cyan]"
+                f"[bold white]{escape(elegido['name'])}[/bold white] "
+                f"— [cyan]{escape(nombre_artista(elegido))}[/cyan]"
             )
 
             # Espera un segundo para que el usuario pueda leer el mensaje
@@ -333,4 +360,8 @@ def menu():
 
 
 if __name__ == "__main__":
-    menu()
+    try:
+        menu()
+    except KeyboardInterrupt:
+        # Ctrl+C: salida limpia en vez de un traceback
+        console.print("\n\n[bold green]👋 ¡Hasta luego![/bold green]\n")
